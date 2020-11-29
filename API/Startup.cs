@@ -33,6 +33,7 @@ namespace API
                 options.UseSqlite(_config.GetConnectionString("DefaultConnection")); //db connection string
             });
             services.AddControllers();
+            services.AddCors(); //to avoid cors policy error
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "API", Version = "v1" });
@@ -52,6 +53,8 @@ namespace API
             app.UseHttpsRedirection();
 
             app.UseRouting();
+
+            app.UseCors(x => x.AllowAnyHeader().AllowAnyMethod().WithOrigins("https://localhost:4200")); //cors policy
 
             app.UseAuthorization();
 
