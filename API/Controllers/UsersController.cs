@@ -3,14 +3,13 @@ using System.Linq;
 using System.Threading.Tasks;
 using API.Data;
 using API.Entities;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 namespace API.Controllers
 {
-    [ApiController] //this class is a controller type, inside of the mvc
-    [Route("api/[controller]")] //to get info of this controller, the client needs to search api/users
-    public class UsersController : ControllerBase //the controller have to derive from ControllerBase
+    public class UsersController : BaseApiController //the controller inherits the attributes of BaseApiController
     {
         private readonly DataContext _context;
         public UsersController(DataContext context) //getting data from db
@@ -19,12 +18,14 @@ namespace API.Controllers
         }
 
         [HttpGet]
+        [AllowAnonymous] //to access to this method, authorization is not required
         public async Task<ActionResult<IEnumerable<AppUser>>> GetUsers() //the function is going to return something of type ActionResult, which is IEnumerable<AppUser> type
         { 
             return await _context.Users.ToListAsync();    
         }
 
         // api/users/3
+        [Authorize] //to protect this endpoint
         [HttpGet("{id}")]
         public async Task<ActionResult<AppUser>> GetUser(int id) 
         { 
